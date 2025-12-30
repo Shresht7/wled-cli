@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 
+use crate::commands;
+
 #[derive(Parser)]
 pub(crate) struct Cli {
     #[command(subcommand)]
@@ -11,7 +13,7 @@ pub(crate) struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub(crate) enum Command {
-    Power,
+    Power(commands::Power),
     Brightness,
     Preset,
     Effect,
@@ -22,8 +24,15 @@ pub(crate) enum Command {
 
 impl Command {
     pub(crate) fn execute(self) -> Result<(), Box<dyn std::error::Error>> {
-        println!("{self:#?}");
-        Ok(())
+        match self {
+            Command::Power(cmd) => cmd.execute(),
+            Command::Brightness => todo!(),
+            Command::Preset => todo!(),
+            Command::Effect => todo!(),
+            Command::Status => todo!(),
+            Command::Info => todo!(),
+            Command::Device => todo!(),
+        }
     }
 }
 

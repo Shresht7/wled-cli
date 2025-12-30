@@ -1,4 +1,5 @@
 mod cli;
+mod commands;
 
 // The main entrypoint of the application
 fn main() {
