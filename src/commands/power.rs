@@ -1,5 +1,7 @@
 use clap::Parser;
 
+use crate::context::Context;
+
 #[derive(Parser, Debug)]
 pub(crate) struct Power {
     #[arg(short, long, default_value_t = true)]
@@ -7,12 +9,12 @@ pub(crate) struct Power {
 }
 
 impl Power {
-    pub(crate) fn execute(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let state = match self.on {
             true => "ON",
             false => "OFF",
         };
-        println!("Powering: {state}");
+        println!("Powering: {state} for {}", ctx.host);
         Ok(())
     }
 }

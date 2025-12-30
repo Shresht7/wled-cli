@@ -1,13 +1,13 @@
 use clap::{Parser, Subcommand};
 
-use crate::commands;
+use crate::{commands, context::Context};
 
 #[derive(Parser)]
 pub(crate) struct Cli {
     #[command(subcommand)]
     pub(crate) command: Command,
 
-    #[arg(long)]
+    #[arg(long, global = true)]
     pub(crate) host: Option<String>,
 }
 
@@ -23,9 +23,9 @@ pub(crate) enum Command {
 }
 
 impl Command {
-    pub(crate) fn execute(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         match self {
-            Command::Power(cmd) => cmd.execute(),
+            Command::Power(cmd) => cmd.execute(ctx),
             Command::Brightness => todo!(),
             Command::Preset => todo!(),
             Command::Effect => todo!(),
