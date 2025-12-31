@@ -7,9 +7,10 @@ pub(crate) struct Context {
 
 impl Context {
     pub(crate) fn new(host: String) -> Self {
-        Context {
-            host,
-            client: reqwest::blocking::Client::new(),
-        }
+        let client = reqwest::blocking::Client::builder()
+            .timeout(std::time::Duration::from_secs(5))
+            .build()
+            .expect("failed to build http client");
+        Context { host, client }
     }
 }
