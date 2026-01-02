@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 use crate::api::eff::EffectsList;
 use crate::context::Context;
@@ -6,10 +6,28 @@ use crate::context::Context;
 /// List all available effects
 #[derive(Parser, Debug)]
 #[clap(alias = "fx")]
-pub(crate) struct Effects {}
+pub(crate) struct Effects {
+    #[clap(subcommand)]
+    subcommands: Option<Subcommands>,
+}
+
+#[derive(Subcommand, Debug)]
+enum Subcommands {
+    List,
+    Set,
+}
 
 impl Effects {
     pub(crate) fn execute(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+        match self.subcommands {
+            Some(Subcommands::List) => self.get_effects(ctx),
+            Some(Subcommands::Set) => todo!(),
+            None => self.get_effects(ctx),
+        }
+    }
+
+    /// Get a list of all available effects
+    fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/eff", ctx.host);
 
         let response = ctx.client.get(url).send()?;
