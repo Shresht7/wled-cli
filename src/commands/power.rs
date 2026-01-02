@@ -41,47 +41,21 @@ impl Power {
         }
     }
 
-    /// Sets the power status
     fn set_power(
         &self,
         subcmd: PowerSubcommand,
         ctx: &Context,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let url = Endpoint::State.url(&ctx.host);
-
-        let power_state: state::PowerState = subcmd.into();
-        let payload = State {
-            on: Some(power_state),
-            ..Default::default()
-        };
-
-        let response = ctx.client.post(url).json(&payload).send()?;
-
-        if !response.status().is_success() {
-            return Err(Box::new(response.error_for_status().unwrap_err()));
-        }
-
-        let json_response: response::APIResponse = response.json()?;
-
-        if json_response.success {
-            println!("Successfully set power state for {}", ctx.host);
-        } else {
-            println!("Failed to set power state for {}", ctx.host);
-        }
-
+        let state = subcmd.into();
+        ctx.client.set_power(state)?;
         Ok(())
     }
 
-    /// Gets the current power status
     fn get_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = Endpoint::State.url(&ctx.host);
-
-        let response: State = ctx.client.get(url).send()?.json()?;
-
-        if let Some(power) = response.on {
-            println!("Power: {power:#?}");
+        let power = ctx.client.get_power()?;
+        if let Some(power) = power {
+            println!("Power: {power}");
         }
-
         Ok(())
     }
 }

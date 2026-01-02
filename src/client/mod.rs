@@ -1,5 +1,7 @@
 use reqwest::blocking::Client;
 
+mod power;
+
 pub struct WLEDClient {
     /// The IP address of the WLED device
     pub(crate) host: String,
