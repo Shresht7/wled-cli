@@ -1,5 +1,6 @@
 [package]
 name = "wled"
+description = "A command-line-interface for WLED"
 version = "0.1.0"
 edition = "2024"
 
