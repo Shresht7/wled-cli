@@ -1,6 +1,8 @@
 use clap::Parser;
 use serde_json::json;
 
+use crate::api::endpoints::Endpoint;
+use crate::api::state::State;
 use crate::api::{response, state};
 use crate::context::Context;
 
@@ -22,7 +24,7 @@ impl Power {
 
     /// Sets the power status
     fn set_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/state", ctx.host);
+        let url = Endpoint::State.url(&ctx.host);
 
         let payload = json!({
             "on": &self.subcommand
@@ -50,12 +52,14 @@ impl Power {
 
     /// Gets the current power status
     fn get_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/state", ctx.host);
+        let url = Endpoint::State.url(&ctx.host);
 
-        let response = ctx.client.get(url).send()?.json::<serde_json::Value>()?;
-        let power = &response["on"];
+        let response: State = ctx.client.get(url).send()?.json()?;
 
-        println!("Power: {power}");
+        if let Some(power) = response.on {
+            println!("Power: {power:#?}");
+        }
+
         Ok(())
     }
 }

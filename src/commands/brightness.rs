@@ -1,6 +1,7 @@
 use clap::Parser;
 use serde_json::json;
 
+use crate::api::{endpoints::Endpoint, state::State};
 use crate::context::Context;
 
 #[derive(Parser, Debug)]
@@ -20,7 +21,7 @@ impl Brightness {
 
     /// Set the brightness level
     fn set_brightness(self, val: u8, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/state", ctx.host);
+        let url = Endpoint::State.url(&ctx.host);
 
         let payload = json!({ "bri": val });
 
@@ -37,16 +38,17 @@ impl Brightness {
 
     /// Get the current brightness level
     fn get_brightness(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/state", ctx.host);
+        let url = Endpoint::State.url(&ctx.host);
 
-        let response = reqwest::blocking::get(url)?.json::<serde_json::Value>()?;
-        let brightness = &response["bri"];
-        let power = &response["on"];
+        let response = ctx.client.get(url).send()?;
+        let state: State = response.json()?;
 
-        // ? Probably should create a struct for the `State` object.
-
-        println!("Brightness: {brightness}");
-        println!("Power: {power}");
+        if let Some(bri) = state.bri {
+            println!("Brightness: {bri}");
+        }
+        if let Some(on) = state.on {
+            println!("Power: {:?}", on);
+        }
 
         Ok(())
     }

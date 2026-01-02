@@ -2,6 +2,7 @@ use clap::{Parser, Subcommand};
 use serde_json::json;
 
 use crate::api::eff::EffectsList;
+use crate::api::endpoints::Endpoint;
 use crate::api::state::{Fx, Segment, State};
 use crate::context::Context;
 
@@ -32,7 +33,7 @@ impl Effects {
 
     /// Get a list of all available effects
     fn list_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/eff", ctx.host);
+        let url = Endpoint::Eff.url(&ctx.host);
 
         let response = ctx.client.get(url).send()?;
 
@@ -50,7 +51,7 @@ impl Effects {
     }
 
     fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/state", ctx.host);
+        let url = Endpoint::State.url(&ctx.host);
 
         let response = ctx.client.get(url).send()?;
 
@@ -78,7 +79,7 @@ impl Effects {
     ) -> Result<(), Box<dyn std::error::Error>> {
         let segments = Self::parse_into_segments(effects)?;
 
-        let url = format!("http://{}/json/state", ctx.host);
+        let url = Endpoint::State.url(&ctx.host);
 
         let payload = json!({
             "seg": segments

@@ -1,14 +1,17 @@
 use clap::Parser;
 use serde::Deserialize;
 
-use crate::{api::pal::PaletteList, context::Context};
+use crate::{
+    api::{endpoints::Endpoint, pal::PaletteList},
+    context::Context,
+};
 
 #[derive(Debug, Parser, Deserialize)]
 pub(crate) struct Palettes {}
 
 impl Palettes {
     pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = format!("http://{}/json/pal", ctx.host);
+        let url = Endpoint::Pal.url(&ctx.host);
 
         let response = ctx.client.get(url).send()?;
 
