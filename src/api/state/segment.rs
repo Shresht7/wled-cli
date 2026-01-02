@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 pub type Segments = Vec<Segment>;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Default, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Segment {
     /// Zero-indexed ID of the segment. If omitted, the ID will be inferred from the position in the `seg` array
@@ -51,6 +51,19 @@ impl std::fmt::Display for Fx {
             Fx::Increment => write!(f, "~"),
             Fx::Decrement => write!(f, "~-"),
             Fx::Random => write!(f, "r"),
+        }
+    }
+}
+
+impl std::str::FromStr for Fx {
+    type Err = std::num::ParseIntError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "~" => Ok(Fx::Increment),
+            "~-" => Ok(Fx::Decrement),
+            "r" => Ok(Fx::Random),
+            _ => Ok(Fx::ID(s.parse()?)),
         }
     }
 }
