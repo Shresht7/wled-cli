@@ -5,6 +5,7 @@ use crate::context::Context;
 
 /// Power on or off the WLED device
 #[derive(Parser, Debug)]
+#[clap(alias = "switch")]
 pub(crate) struct Power {
     #[arg(long)]
     on: bool,
