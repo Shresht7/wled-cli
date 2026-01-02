@@ -20,16 +20,16 @@ enum Subcommands {
 impl Effects {
     pub(crate) fn execute(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         match self.subcommands {
-            Some(Subcommands::List) => self.get_effects(ctx),
+            Some(Subcommands::List) => self.list_effects(ctx),
             Some(Subcommands::Set) => todo!(),
-            None => self.get_effects(ctx),
+            None => self.list_effects(ctx),
         }
     }
 
     // ? Looks like setting/getting effects is under segments. Will have to think on how to best implement this.
 
     /// Get a list of all available effects
-    fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    fn list_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/eff", ctx.host);
 
         let response = ctx.client.get(url).send()?;
