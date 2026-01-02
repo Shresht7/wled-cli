@@ -13,6 +13,7 @@ fn main() {
 // The main run logic
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args = cli::parse();
-    let ctx = context::Context::new(args.host.expect("a wled ip address"));
+    let host = args.host.expect("a wled ip address");
+    let ctx = context::Context::new(host);
     args.command.execute(&ctx)
 }
