@@ -1,5 +1,6 @@
 use reqwest::blocking::Client;
 
+mod effects;
 mod palettes;
 mod power;
 

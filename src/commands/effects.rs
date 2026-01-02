@@ -33,20 +33,10 @@ impl Effects {
 
     /// Get a list of all available effects
     fn list_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = Endpoint::Eff.url(&ctx.host);
-
-        let response = ctx.client.get(url).send()?;
-
-        if !response.status().is_success() {
-            return Err(Box::new(response.error_for_status().unwrap_err()));
-        }
-
-        let effects: EffectsList = response.json()?;
-
+        let effects = ctx.client.list_effects()?;
         for (i, fx) in effects.iter().enumerate() {
             println!("{i:>3} {fx}");
         }
-
         Ok(())
     }
 
