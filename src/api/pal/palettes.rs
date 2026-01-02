@@ -1,1 +1,1 @@
-pub type Palettes = Vec<String>;
+pub type PaletteList = Vec<String>;
