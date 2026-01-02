@@ -23,6 +23,15 @@ impl Brightness {
     }
 
     fn get_brightness(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        todo!()
+        let url = format!("http://{}/json/state", ctx.host);
+
+        let response = reqwest::blocking::get(url)?.json::<serde_json::Value>()?;
+        let brightness = &response["bri"];
+        let power = &response["on"];
+
+        println!("Brightness: {brightness}");
+        println!("Power: {power}");
+
+        Ok(())
     }
 }
