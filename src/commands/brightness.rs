@@ -1,4 +1,5 @@
 use clap::Parser;
+use serde_json::json;
 
 use crate::context::Context;
 
@@ -19,7 +20,19 @@ impl Brightness {
     }
 
     fn set_brightness(self, val: u8, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        todo!()
+        let url = format!("http://{}/json/state", ctx.host);
+
+        let payload = json!({ "bri": val });
+
+        let response = ctx.client.post(url).json(&payload).send()?;
+
+        if !response.status().is_success() {
+            return Err(Box::new(response.error_for_status().unwrap_err()));
+        }
+
+        println!("Brightness set to {}", val);
+
+        Ok(())
     }
 
     fn get_brightness(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
