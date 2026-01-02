@@ -1,7 +1,6 @@
-use clap::Subcommand;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Subcommand)]
+#[derive(Debug, PartialEq)]
 pub enum PowerState {
     /// Turn the device on
     On,

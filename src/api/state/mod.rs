@@ -5,7 +5,7 @@ mod segment;
 pub use segment::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 pub struct State {
     /// Whether the device's power is on or off
     #[serde(skip_serializing_if = "Option::is_none")]
