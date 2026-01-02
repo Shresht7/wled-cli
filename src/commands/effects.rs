@@ -20,8 +20,8 @@ impl Effects {
 
         let effects: EffectsList = response.json()?;
 
-        for fx in effects {
-            println!("{fx}");
+        for (i, fx) in effects.iter().enumerate() {
+            println!("{i:>3} {fx}");
         }
 
         Ok(())
