@@ -1,7 +1,7 @@
-use clap::{Parser, Subcommand};
-use serde::{Deserialize, Serialize};
+use clap::Parser;
 use serde_json::json;
 
+use crate::api::{response, state};
 use crate::context::Context;
 
 /// Power on or off the WLED device
@@ -9,30 +9,7 @@ use crate::context::Context;
 #[clap(alias = "switch")]
 pub(crate) struct Power {
     #[clap(subcommand)]
-    subcommand: SubCommand,
-}
-
-#[derive(Subcommand, Debug)]
-enum SubCommand {
-    /// Turn the device on
-    On,
-    /// Turn the device off
-    Off,
-    /// Toggle the device on or off
-    Toggle,
-}
-
-impl Serialize for SubCommand {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            SubCommand::On => serializer.serialize_bool(true),
-            SubCommand::Off => serializer.serialize_bool(false),
-            SubCommand::Toggle => serializer.serialize_str("t"),
-        }
-    }
+    subcommand: state::PowerState,
 }
 
 impl Power {
@@ -49,7 +26,7 @@ impl Power {
             return Err(Box::new(response.error_for_status().unwrap_err()));
         }
 
-        let json_response: APIResponse = response.json()?;
+        let json_response: response::APIResponse = response.json()?;
 
         if json_response.success {
             println!(
@@ -62,9 +39,4 @@ impl Power {
 
         Ok(())
     }
-}
-
-#[derive(Deserialize)]
-pub(crate) struct APIResponse {
-    success: bool,
 }
