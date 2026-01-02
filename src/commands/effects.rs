@@ -26,6 +26,8 @@ impl Effects {
         }
     }
 
+    // ? Looks like setting/getting effects is under segments. Will have to think on how to best implement this.
+
     /// Get a list of all available effects
     fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/eff", ctx.host);
