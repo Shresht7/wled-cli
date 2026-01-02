@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
 use crate::api::eff::EffectsList;
+use crate::api::state::State;
 use crate::context::Context;
 
 /// List all available effects
@@ -14,6 +15,7 @@ pub(crate) struct Effects {
 #[derive(Subcommand, Debug)]
 enum Subcommands {
     List,
+    Get,
     Set,
 }
 
@@ -21,6 +23,7 @@ impl Effects {
     pub(crate) fn execute(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         match self.subcommands {
             Some(Subcommands::List) => self.list_effects(ctx),
+            Some(Subcommands::Get) => self.get_effects(ctx),
             Some(Subcommands::Set) => todo!(),
             None => self.list_effects(ctx),
         }
@@ -42,6 +45,28 @@ impl Effects {
 
         for (i, fx) in effects.iter().enumerate() {
             println!("{i:>3} {fx}");
+        }
+
+        Ok(())
+    }
+
+    fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+        let url = format!("http://{}/json/state", ctx.host);
+
+        let response = ctx.client.get(url).send()?;
+
+        if !response.status().is_success() {
+            return Err(Box::new(response.error_for_status().unwrap_err()));
+        }
+
+        let state: State = response.json()?;
+
+        if let Some(segments) = state.seg {
+            for (idx, segment) in segments.iter().enumerate() {
+                if let Some(fx) = &segment.fx {
+                    println!("Segment[{}]: {}", segment.id.unwrap_or(idx as u8), fx);
+                }
+            }
         }
 
         Ok(())
