@@ -1,5 +1,3 @@
-use reqwest::Url;
-
 /// API Endpoints
 pub enum Endpoint {
     State,
