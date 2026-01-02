@@ -41,16 +41,7 @@ impl Effects {
     }
 
     fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = Endpoint::State.url(&ctx.host);
-
-        let response = ctx.client.get(url).send()?;
-
-        if !response.status().is_success() {
-            return Err(Box::new(response.error_for_status().unwrap_err()));
-        }
-
-        let state: State = response.json()?;
-
+        let state = ctx.client.get_state()?;
         if let Some(segments) = state.seg {
             for (idx, segment) in segments.iter().enumerate() {
                 if let Some(fx) = &segment.fx {
@@ -58,7 +49,6 @@ impl Effects {
                 }
             }
         }
-
         Ok(())
     }
 
