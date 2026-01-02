@@ -25,7 +25,7 @@ impl Effects {
             Some(Subcommands::List) => self.list_effects(ctx),
             Some(Subcommands::Get) => self.get_effects(ctx),
             Some(Subcommands::Set) => todo!(),
-            None => self.list_effects(ctx),
+            None => self.get_effects(ctx),
         }
     }
 
