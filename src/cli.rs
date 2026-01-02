@@ -3,6 +3,7 @@ use clap::{Parser, Subcommand};
 use crate::{commands, context::Context};
 
 #[derive(Parser)]
+#[clap(version, about)]
 pub(crate) struct Cli {
     #[command(subcommand)]
     pub(crate) command: Command,
