@@ -1,4 +1,5 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::context::Context;
@@ -7,24 +8,63 @@ use crate::context::Context;
 #[derive(Parser, Debug)]
 #[clap(alias = "switch")]
 pub(crate) struct Power {
-    #[arg(long)]
-    on: bool,
-    #[arg(long)]
-    off: bool,
+    #[clap(subcommand)]
+    subcommand: SubCommand,
 }
 
-// ? Maybe a subcommand structure would be more ergonomic. For example, `power on`, `power off` and `power toggle`.
-// ? simply `power` can then be used to query the state.
+#[derive(Subcommand, Debug)]
+enum SubCommand {
+    /// Turn the device on
+    On,
+    /// Turn the device off
+    Off,
+    /// Toggle the device on or off
+    Toggle,
+}
+
+impl Serialize for SubCommand {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            SubCommand::On => serializer.serialize_bool(true),
+            SubCommand::Off => serializer.serialize_bool(false),
+            SubCommand::Toggle => serializer.serialize_str("t"),
+        }
+    }
+}
 
 impl Power {
     pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/state", ctx.host);
-        let on = self.on && !self.off;
-        let payload = json!({ "on": on });
-        ctx.client.post(url).json(&payload).send()?;
 
-        // ? Probably should abstract away the API logic in a separate module
+        let payload = json!({
+            "on": &self.subcommand
+        });
+
+        let response = ctx.client.post(url).json(&payload).send()?;
+
+        if !response.status().is_success() {
+            return Err(Box::new(response.error_for_status().unwrap_err()));
+        }
+
+        let json_response: APIResponse = response.json()?;
+
+        if json_response.success {
+            println!(
+                "Successfully set power state for {} to {:?}",
+                ctx.host, &self.subcommand
+            );
+        } else {
+            println!("Failed to set power state for {}", ctx.host);
+        }
 
         Ok(())
     }
+}
+
+#[derive(Deserialize)]
+pub(crate) struct APIResponse {
+    success: bool,
 }
