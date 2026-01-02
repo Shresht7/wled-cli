@@ -7,7 +7,6 @@ use crate::context::Context;
 pub(crate) struct Brightness {
     /// Set the brightness to a specific value (0-255)
     /// If no value is provided, the get the brightness value of the WLED
-    #[arg()]
     value: Option<u8>,
 }
 
@@ -19,6 +18,7 @@ impl Brightness {
         }
     }
 
+    /// Set the brightness level
     fn set_brightness(self, val: u8, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/state", ctx.host);
 
@@ -35,12 +35,15 @@ impl Brightness {
         Ok(())
     }
 
+    /// Get the current brightness level
     fn get_brightness(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/state", ctx.host);
 
         let response = reqwest::blocking::get(url)?.json::<serde_json::Value>()?;
         let brightness = &response["bri"];
         let power = &response["on"];
+
+        // ? Probably should create a struct for the `State` object.
 
         println!("Brightness: {brightness}");
         println!("Power: {power}");
