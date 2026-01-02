@@ -1,5 +1,6 @@
 use reqwest::blocking::Client;
 
+mod palettes;
 mod power;
 
 pub struct WLEDClient {
