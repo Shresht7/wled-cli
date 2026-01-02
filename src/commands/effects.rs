@@ -16,20 +16,18 @@ pub(crate) struct Effects {
 enum Subcommands {
     List,
     Get,
-    Set,
+    Set { effects: Vec<String> },
 }
 
 impl Effects {
     pub(crate) fn execute(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        match self.subcommands {
+        match &self.subcommands {
             Some(Subcommands::List) => self.list_effects(ctx),
             Some(Subcommands::Get) => self.get_effects(ctx),
-            Some(Subcommands::Set) => todo!(),
+            Some(Subcommands::Set { effects }) => self.set_effects(effects, ctx),
             None => self.get_effects(ctx),
         }
     }
-
-    // ? Looks like setting/getting effects is under segments. Will have to think on how to best implement this.
 
     /// Get a list of all available effects
     fn list_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
@@ -69,6 +67,17 @@ impl Effects {
             }
         }
 
+        Ok(())
+    }
+
+    fn set_effects(
+        &self,
+        effects: &[String],
+        ctx: &Context,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        for fx in effects {
+            println!("Setting effect to {}", fx);
+        }
         Ok(())
     }
 }
