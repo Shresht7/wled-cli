@@ -1,5 +1,6 @@
 use clap::Parser;
 
+use crate::api::eff::EffectsList;
 use crate::context::Context;
 
 /// List all available effects
@@ -17,7 +18,7 @@ impl Effects {
             return Err(Box::new(response.error_for_status().unwrap_err()));
         }
 
-        let effects: Vec<String> = response.json()?;
+        let effects: EffectsList = response.json()?;
 
         for fx in effects {
             println!("{fx}");
