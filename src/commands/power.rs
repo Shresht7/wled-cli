@@ -9,11 +9,19 @@ use crate::context::Context;
 #[clap(alias = "switch")]
 pub(crate) struct Power {
     #[clap(subcommand)]
-    subcommand: state::PowerState,
+    subcommand: Option<state::PowerState>,
 }
 
 impl Power {
     pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+        match self.subcommand {
+            Some(_) => self.set_power(ctx),
+            None => self.get_power(ctx),
+        }
+    }
+
+    /// Sets the power status
+    fn set_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/state", ctx.host);
 
         let payload = json!({
@@ -37,6 +45,17 @@ impl Power {
             println!("Failed to set power state for {}", ctx.host);
         }
 
+        Ok(())
+    }
+
+    /// Gets the current power status
+    fn get_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+        let url = format!("http://{}/json/state", ctx.host);
+
+        let response = reqwest::blocking::get(url)?.json::<serde_json::Value>()?;
+        let power = &response["on"];
+
+        println!("Power: {power}");
         Ok(())
     }
 }
