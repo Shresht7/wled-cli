@@ -52,7 +52,7 @@ impl Power {
     fn get_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         let url = format!("http://{}/json/state", ctx.host);
 
-        let response = reqwest::blocking::get(url)?.json::<serde_json::Value>()?;
+        let response = ctx.client.get(url).send()?.json::<serde_json::Value>()?;
         let power = &response["on"];
 
         println!("Power: {power}");
