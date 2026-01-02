@@ -11,7 +11,7 @@ pub(crate) struct Context {
 impl Context {
     /// Create a new application context
     pub(crate) fn new(host: String) -> Self {
-        let client = reqwest::blocking::Client::builder()
+        let client = Client::builder()
             .timeout(std::time::Duration::from_secs(5))
             .build()
             .expect("failed to build http client");
