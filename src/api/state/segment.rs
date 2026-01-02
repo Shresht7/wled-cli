@@ -36,6 +36,22 @@ pub struct Segment {
 
 // ? Going a little overboard with u8s here. Should review at some point.
 
+impl Segment {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn id(mut self, id: u8) -> Self {
+        self.id = Some(id);
+        self
+    }
+
+    pub fn fx(mut self, fx: Fx) -> Self {
+        self.fx = Some(fx);
+        self
+    }
+}
+
 #[derive(Debug)]
 pub enum Fx {
     ID(u8),

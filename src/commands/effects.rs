@@ -1,7 +1,8 @@
 use clap::{Parser, Subcommand};
+use serde_json::json;
 
 use crate::api::eff::EffectsList;
-use crate::api::state::State;
+use crate::api::state::{Fx, Segment, State};
 use crate::context::Context;
 
 /// List all available effects
@@ -75,9 +76,44 @@ impl Effects {
         effects: &[String],
         ctx: &Context,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        for fx in effects {
-            println!("Setting effect to {}", fx);
+        let segments = Self::parse_into_segments(effects)?;
+
+        let url = format!("http://{}/json/state", ctx.host);
+
+        let payload = json!({
+            "seg": segments
+        });
+
+        let response = ctx.client.put(url).json(&payload).send()?;
+
+        if !response.status().is_success() {
+            return Err(Box::new(response.error_for_status().unwrap_err()));
         }
+
+        for (idx, segment) in segments.iter().enumerate() {
+            if let Some(fx) = &segment.fx {
+                println!("Segment[{}]: {}", segment.id.unwrap_or(idx as u8), fx);
+            }
+        }
+
         Ok(())
     }
+
+    fn parse_into_segments(effects: &[String]) -> Result<Vec<Segment>, Box<dyn std::error::Error>> {
+        let mut segments: Vec<Segment> = Vec::new();
+        for (idx, fx) in effects.iter().enumerate() {
+            let segment = if fx.contains(":") {
+                let parts = fx.split(":").collect::<Vec<&str>>();
+                let id = parts[0].parse::<u8>()?;
+                let fx = parts[1].parse::<Fx>()?;
+                Segment::new().id(id).fx(fx)
+            } else {
+                Segment::new().id(idx as u8).fx(fx.parse()?)
+            };
+            segments.push(segment);
+        }
+        Ok(segments)
+    }
 }
+
+// !! Holy hell this needs a refactor. Need to wrap all API client logic up in a Client struct. Decouple api logic from command logic. etc.
