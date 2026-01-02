@@ -10,6 +10,16 @@ pub enum PowerState {
     Toggle,
 }
 
+impl std::fmt::Display for PowerState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PowerState::On => write!(f, "on"),
+            PowerState::Off => write!(f, "off"),
+            PowerState::Toggle => write!(f, "toggle"),
+        }
+    }
+}
+
 impl Serialize for PowerState {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
