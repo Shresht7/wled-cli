@@ -15,7 +15,7 @@ pub(crate) struct Cli {
 #[derive(Subcommand, Debug)]
 pub(crate) enum Command {
     Power(commands::Power),
-    Brightness,
+    Brightness(commands::Brightness),
     Preset,
     Effect,
     Status,
@@ -27,7 +27,7 @@ impl Command {
     pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
         match self {
             Command::Power(cmd) => cmd.execute(ctx),
-            Command::Brightness => todo!(),
+            Command::Brightness(cmd) => cmd.execute(ctx),
             Command::Preset => todo!(),
             Command::Effect => todo!(),
             Command::Status => todo!(),
