@@ -1,8 +1,11 @@
-use crate::api::state::{Fx, Segment};
+use crate::{
+    api::state::{Fx, Segment},
+    error::Result,
+};
 
 pub type EffectsList = Vec<String>;
 
-pub fn parse_into_segments(effects: &[String]) -> Result<Vec<Segment>, Box<dyn std::error::Error>> {
+pub fn parse_into_segments(effects: &[String]) -> Result<Vec<Segment>> {
     let mut segments: Vec<Segment> = Vec::new();
     for (idx, fx) in effects.iter().enumerate() {
         let segment = if fx.contains(":") {

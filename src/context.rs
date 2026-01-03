@@ -1,4 +1,4 @@
-use crate::client::WLEDClient;
+use crate::{client::WLEDClient, error::Result};
 
 /// The application context
 pub(crate) struct Context {
@@ -8,8 +8,8 @@ pub(crate) struct Context {
 
 impl Context {
     /// Create a new application context
-    pub(crate) fn new(host: String) -> Self {
-        let client = WLEDClient::new(host);
-        Context { client }
+    pub(crate) fn new(host: String) -> Result<Self> {
+        let client = WLEDClient::new(host)?;
+        Ok(Context { client })
     }
 }

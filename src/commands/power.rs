@@ -1,9 +1,7 @@
 use clap::{Parser, Subcommand};
 
-use crate::api::endpoints::Endpoint;
-use crate::api::response;
-use crate::api::state::{self, State};
-use crate::context::Context;
+use crate::api::state::PowerState;
+use crate::{context::Context, error::Result};
 
 #[derive(Subcommand, Debug, Clone, Copy)]
 pub enum PowerSubcommand {
@@ -15,12 +13,12 @@ pub enum PowerSubcommand {
     Toggle,
 }
 
-impl From<PowerSubcommand> for state::PowerState {
+impl From<PowerSubcommand> for PowerState {
     fn from(value: PowerSubcommand) -> Self {
         match value {
-            PowerSubcommand::On => state::PowerState::On,
-            PowerSubcommand::Off => state::PowerState::Off,
-            PowerSubcommand::Toggle => state::PowerState::Toggle,
+            PowerSubcommand::On => PowerState::On,
+            PowerSubcommand::Off => PowerState::Off,
+            PowerSubcommand::Toggle => PowerState::Toggle,
         }
     }
 }
@@ -34,24 +32,21 @@ pub(crate) struct Power {
 }
 
 impl Power {
-    pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    pub(crate) fn execute(self, ctx: &Context) -> Result<()> {
         match self.subcommand {
             Some(state) => self.set_power(state, ctx),
             None => self.get_power(ctx),
         }
     }
 
-    fn set_power(
-        &self,
-        subcmd: PowerSubcommand,
-        ctx: &Context,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn set_power(&self, subcmd: PowerSubcommand, ctx: &Context) -> Result<()> {
         let state = subcmd.into();
         ctx.client.set_power(state)?;
+        println!("Power set");
         Ok(())
     }
 
-    fn get_power(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    fn get_power(&self, ctx: &Context) -> Result<()> {
         let power = ctx.client.get_power()?;
         if let Some(power) = power {
             println!("Power: {power}");

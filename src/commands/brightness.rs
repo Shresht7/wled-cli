@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use crate::context::Context;
+use crate::{context::Context, error::Result};
 
 #[derive(Parser, Debug)]
 pub(crate) struct Brightness {
@@ -10,7 +10,7 @@ pub(crate) struct Brightness {
 }
 
 impl Brightness {
-    pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    pub(crate) fn execute(self, ctx: &Context) -> Result<()> {
         match self.value {
             Some(val) => self.set_brightness(val, ctx),
             None => self.get_brightness(ctx),
@@ -18,14 +18,14 @@ impl Brightness {
     }
 
     /// Set the brightness level
-    fn set_brightness(self, val: u8, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    fn set_brightness(self, val: u8, ctx: &Context) -> Result<()> {
         ctx.client.set_brightness(val)?;
         println!("Brightness set to {}", val);
         Ok(())
     }
 
     /// Get the current brightness level
-    fn get_brightness(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    fn get_brightness(self, ctx: &Context) -> Result<()> {
         let state = ctx.client.get_state()?;
         if let Some(bri) = state.bri {
             println!("Brightness: {bri}");

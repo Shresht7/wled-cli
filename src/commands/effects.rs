@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 
-use crate::context::Context;
+use crate::{context::Context, error::Result};
 
 /// List all available effects
 #[derive(Parser, Debug)]
@@ -18,7 +18,7 @@ enum Subcommands {
 }
 
 impl Effects {
-    pub(crate) fn execute(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    pub(crate) fn execute(&self, ctx: &Context) -> Result<()> {
         match &self.subcommands {
             Some(Subcommands::List) => self.list_effects(ctx),
             Some(Subcommands::Get) => self.get_effects(ctx),
@@ -28,7 +28,7 @@ impl Effects {
     }
 
     /// Get a list of all available effects
-    fn list_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    fn list_effects(&self, ctx: &Context) -> Result<()> {
         let effects = ctx.client.list_effects()?;
         for (i, fx) in effects.iter().enumerate() {
             println!("{i:>3} {fx}");
@@ -36,7 +36,7 @@ impl Effects {
         Ok(())
     }
 
-    fn get_effects(&self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    fn get_effects(&self, ctx: &Context) -> Result<()> {
         let state = ctx.client.get_state()?;
         if let Some(segments) = state.seg {
             for (idx, segment) in segments.iter().enumerate() {
@@ -48,17 +48,9 @@ impl Effects {
         Ok(())
     }
 
-    fn set_effects(
-        &self,
-        effects: &[String],
-        ctx: &Context,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let segments = ctx.client.set_effects(effects)?;
-        for (idx, segment) in segments.iter().enumerate() {
-            if let Some(fx) = &segment.fx {
-                println!("Segment[{}]: {}", segment.id.unwrap_or(idx as u8), fx);
-            }
-        }
+    fn set_effects(&self, effects: &[String], ctx: &Context) -> Result<()> {
+        ctx.client.set_effects(effects)?;
+        println!("Effects set.");
         Ok(())
     }
 }

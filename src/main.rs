@@ -3,6 +3,7 @@ mod cli;
 mod client;
 mod commands;
 mod context;
+mod error;
 
 // The main entrypoint of the application
 fn main() {
@@ -13,9 +14,9 @@ fn main() {
 }
 
 // The main run logic
-fn run() -> Result<(), Box<dyn std::error::Error>> {
+fn run() -> error::Result<()> {
     let args = cli::parse();
     let host = args.host.expect("a wled ip address");
-    let ctx = context::Context::new(host);
+    let ctx = context::Context::new(host)?;
     args.command.execute(&ctx)
 }

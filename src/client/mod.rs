@@ -1,6 +1,9 @@
 use reqwest::blocking::Client;
 
-use crate::api::{endpoints::Endpoint, state::State};
+use crate::{
+    api::{endpoints::Endpoint, state::State},
+    error::Result,
+};
 
 mod brightness;
 mod effects;
@@ -17,19 +20,14 @@ pub struct WLEDClient {
 }
 
 impl WLEDClient {
-    pub fn new(host: String) -> Self {
+    pub fn new(host: String) -> Result<Self> {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(5))
-            .build()
-            .expect("failed to build http client");
-        Self {
-            host,
-            client,
-            ..Default::default()
-        }
+            .build()?;
+        Ok(Self { host, client })
     }
 
-    pub fn get_state(&self) -> Result<State, Box<dyn std::error::Error>> {
+    pub fn get_state(&self) -> Result<State> {
         let url = Endpoint::State.url(&self.host);
         let response = self.client.get(url).send()?.json()?;
         Ok(response)
