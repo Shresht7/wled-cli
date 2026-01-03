@@ -3,11 +3,11 @@
 A command-line interface for [WLED][WLED]! Control your WLED lighting directly from the terminal or via scripts.
 
 > [!WARNING]
-> Work-in-Progress. Under Construction.
+> 🚧 Work-in-Progress. Under Construction. 🚧
 
 ## The Plan
 
-CLI needs to know which IP address to talk to. Will need some sort of configuration file. Potentially look into mDNS?
+CLI needs to know which IP address to talk to (`--host` flag). Will need some sort of configuration file. Potentially look into mDNS?
 
 ### Commands
 
