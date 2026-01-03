@@ -3,6 +3,17 @@ name = "wled"
 description = "A command-line-interface for WLED"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+keywords = ["wled", "cli", "api", "json", "led"]
+repository = "https://github.com/Shresht7/wled-cli"
+
+[lib]
+name = "wled"
+path = "src/lib.rs"
+
+[[bin]]
+name = "wled"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5.53", features = ["derive"] }

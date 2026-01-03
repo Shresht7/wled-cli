@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
-use crate::{context::Context, error::Result};
+use crate::cli::context::Context;
+use wled::error::Result;
 
 /// List all available effects
 #[derive(Parser, Debug)]

@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
-use crate::{commands, context::Context, error::Result};
+use wled::error::Result;
+use super::{commands, context::Context};
 
 #[derive(Parser)]
 #[clap(version, about)]

@@ -1,6 +1,7 @@
 use clap::Parser;
 
-use crate::{context::Context, error::Result};
+use crate::cli::context::Context;
+use wled::error::Result;
 
 #[derive(Parser, Debug)]
 pub(crate) struct Brightness {

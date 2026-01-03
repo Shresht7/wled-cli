@@ -1,4 +1,4 @@
-use crate::{client::WLEDClient, error::Result};
+use wled::{client::WLEDClient, error::Result};
 
 /// The application context
 pub(crate) struct Context {

@@ -1,7 +1,8 @@
 use clap::Parser;
 use serde::Deserialize;
 
-use crate::{context::Context, error::Result};
+use crate::cli::context::Context;
+use wled::error::Result;
 
 #[derive(Debug, Parser, Deserialize)]
 pub(crate) struct Palettes {}

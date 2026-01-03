@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
-use crate::api::state::PowerState;
-use crate::{context::Context, error::Result};
+use crate::cli::context::Context;
+use wled::{api::state::PowerState, error::Result};
 
 #[derive(Subcommand, Debug, Clone, Copy)]
 pub enum PowerSubcommand {
