@@ -2,6 +2,7 @@ use reqwest::blocking::Client;
 
 use crate::api::{endpoints::Endpoint, state::State};
 
+mod brightness;
 mod effects;
 mod palettes;
 mod power;

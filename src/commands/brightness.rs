@@ -1,7 +1,5 @@
 use clap::Parser;
-use serde_json::json;
 
-use crate::api::{endpoints::Endpoint, state::State};
 use crate::context::Context;
 
 #[derive(Parser, Debug)]
@@ -21,35 +19,20 @@ impl Brightness {
 
     /// Set the brightness level
     fn set_brightness(self, val: u8, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = Endpoint::State.url(&ctx.host);
-
-        let payload = json!({ "bri": val });
-
-        let response = ctx.client.post(url).json(&payload).send()?;
-
-        if !response.status().is_success() {
-            return Err(Box::new(response.error_for_status().unwrap_err()));
-        }
-
+        ctx.client.set_brightness(val)?;
         println!("Brightness set to {}", val);
-
         Ok(())
     }
 
     /// Get the current brightness level
     fn get_brightness(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
-        let url = Endpoint::State.url(&ctx.host);
-
-        let response = ctx.client.get(url).send()?;
-        let state: State = response.json()?;
-
+        let state = ctx.client.get_state()?;
         if let Some(bri) = state.bri {
             println!("Brightness: {bri}");
         }
         if let Some(on) = state.on {
-            println!("Power: {:?}", on);
+            println!("Power: {on}");
         }
-
         Ok(())
     }
 }
