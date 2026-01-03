@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
-use crate::{commands, context::Context};
+use wled::error::Result;
+use super::{commands, context::Context};
 
 #[derive(Parser)]
 #[clap(version, about)]
@@ -25,7 +26,7 @@ pub(crate) enum Command {
 }
 
 impl Command {
-    pub(crate) fn execute(self, ctx: &Context) -> Result<(), Box<dyn std::error::Error>> {
+    pub(crate) fn execute(self, ctx: &Context) -> Result<()> {
         match self {
             Command::Power(cmd) => cmd.execute(ctx),
             Command::Brightness(cmd) => cmd.execute(ctx),
